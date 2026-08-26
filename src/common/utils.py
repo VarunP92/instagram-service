@@ -9,8 +9,8 @@ ALLOWED_CONTENT_TYPES = {"image/jpeg", "image/png", "image/gif", "image/webp"}
 
 
 class ValidationError(Exception):
-    def _init_(self, message, details=None):
-        super()._init_(message)
+    def __init__(self, message, details=None):
+        super().__init__(message)
         self.message = message
         self.details = details
 
