@@ -52,7 +52,7 @@ def test_upload_unsupported_content_type(aws_infra):
     response = upload.lambda_handler(event, None)
 
     assert response["statusCode"] == 400
-    assert json.loads(response["body"])["error"] == "Unsupported content type"
+    assert json.loads(response["body"])["error"] == "Unsupported content_type"
 
 
 def test_upload_invalid_base64(aws_infra):
