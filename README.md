@@ -416,3 +416,9 @@ unfiltered browsing would add more GSIs.
 
 **UUID image IDs.** Chosen over sequential IDs so writes spread across
 DynamoDB partitions and never form a single-partition bottleneck.
+
+## Test results
+
+All 24 unit tests pass (run with pytest):
+
+![pytest results](docs/test-results.png)
