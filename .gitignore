@@ -5,3 +5,4 @@ build/
 .localstack-data/
 scripts/.api_id
 .pytest_cache/
+localstack-data/

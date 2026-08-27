@@ -6,6 +6,7 @@ ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 source "${SCRIPT_DIR}/config.sh"
 
 ZIP_PATH="${ROOT_DIR}/build/lambda.zip"
+ZIP_PATH_WIN="$(cygpath -w "${ZIP_PATH}" 2>/dev/null || echo "${ZIP_PATH}")"
 
 if [ ! -f "${ZIP_PATH}" ]; then
   echo "Lambda zip not found -- running package_lambda.sh first"
@@ -59,7 +60,7 @@ for FUNCTION_NAME in "${!HANDLERS[@]}"; do
 
     awscli lambda update-function-code \
       --function-name "${FUNCTION_NAME}" \
-      --zip-file "fileb://${ZIP_PATH}" >/dev/null
+      --zip-file "fileb://${ZIP_PATH_WIN}" >/dev/null
 
     awscli lambda update-function-configuration \
       --function-name "${FUNCTION_NAME}" \
@@ -75,7 +76,7 @@ for FUNCTION_NAME in "${!HANDLERS[@]}"; do
       --handler "${HANDLER}" \
       --timeout "${LAMBDA_TIMEOUT}" \
       --memory-size "${LAMBDA_MEMORY}" \
-      --zip-file "fileb://${ZIP_PATH}" \
+      --zip-file "fileb://${ZIP_PATH_WIN}" \
       --environment "${ENV_VARS}" >/dev/null
 
   fi
