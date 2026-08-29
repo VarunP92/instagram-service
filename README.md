@@ -243,8 +243,25 @@ API Gateway run locally in one Docker container.
     # 3. Create resources, deploy the 4 Lambdas, wire up API Gateway
     bash scripts/deploy_all.sh
 
-    # 4. Exercise all four endpoints end to end
-    bash scripts/smoke_test.sh
+    # 4. Exercise the four endpoints
+
+    # Note: LocalStack Community's API Gateway HTTP routing is unreliable, so the
+    # deployed Lambda functions are invoked directly below to demonstrate each
+    # endpoint against the real S3 + DynamoDB. (scripts/smoke_test.sh exercises
+    # the same flow via the API Gateway URL if your LocalStack version supports it.)
+
+    # UPLOAD
+    aws --endpoint-url=http://localhost:4566 lambda invoke --function-name images-upload       --payload '{"body":"{"user_id":"demo","filename":"pixel.png","content_type":"image/png","image_base64":"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUASCyY2YAAAAASUVORK5CYII="}"}'       /tmp/upload.json --cli-binary-format raw-in-base64-out >/dev/null ; cat /tmp/upload.json ; echo
+
+    # LIST
+    aws --endpoint-url=http://localhost:4566 lambda invoke --function-name images-list       --payload '{}' /tmp/list.json --cli-binary-format raw-in-base64-out >/dev/null ; cat /tmp/list.json ; echo
+
+    # GET (replace IMAGE_ID with the image_id returned by UPLOAD)
+    IMAGE_ID=paste-image-id-here
+    aws --endpoint-url=http://localhost:4566 lambda invoke --function-name images-get       --payload "{"pathParameters":{"image_id":"$IMAGE_ID"}}"       /tmp/get.json --cli-binary-format raw-in-base64-out >/dev/null ; cat /tmp/get.json ; echo
+
+    # DELETE
+    aws --endpoint-url=http://localhost:4566 lambda invoke --function-name images-delete       --payload "{"pathParameters":{"image_id":"$IMAGE_ID"}}"       /tmp/delete.json --cli-binary-format raw-in-base64-out >/dev/null ; cat /tmp/delete.json ; echo
 
 The deploy script prints your base URL, e.g.:
 
