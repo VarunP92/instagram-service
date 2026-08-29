@@ -251,9 +251,9 @@ API Gateway run locally in one Docker container.
     # the same flow via the API Gateway URL if your LocalStack version supports it.)
 
     # UPLOAD
-    aws --endpoint-url=http://localhost:4566 lambda invoke --function-name images-upload       --payload '{"body":"{"user_id":"demo","filename":"pixel.png","content_type":"image/png","image_base64":"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUASCyY2YAAAAASUVORK5CYII="}"}'       /tmp/upload.json --cli-binary-format raw-in-base64-out >/dev/null ; cat /tmp/upload.json ; echo
+aws --endpoint-url=http://localhost:4566 lambda invoke --function-name images-upload --payload '{"body":"{"user_id":"demo","filename":"pixel.png","content_type":"image/png","image_base64":"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="}"}' /tmp/upload.json --cli-binary-format raw-in-base64-out >/dev/null ; cat /tmp/upload.json ; echo
 
-    # LIST
+# LIST
     aws --endpoint-url=http://localhost:4566 lambda invoke --function-name images-list       --payload '{}' /tmp/list.json --cli-binary-format raw-in-base64-out >/dev/null ; cat /tmp/list.json ; echo
 
     # GET (replace IMAGE_ID with the image_id returned by UPLOAD)
