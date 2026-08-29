@@ -231,9 +231,9 @@ scanning the entire table - which is what keeps the service fast as data grows.
 
 ## 8. Running it on LocalStack
 
-LocalStack emulates AWS on your machine, so all of S3, DynamoDB, Lambda, and API Gateway run locally in one Docker container. Make sure Docker Desktop is running first.
+LocalStack emulates AWS on your machine, so S3, DynamoDB, Lambda, and API Gateway all run locally in one Docker container. Make sure Docker Desktop is running first.
 
-bash
+```bash
 # 1. Start LocalStack
 docker compose up -d
 
@@ -247,34 +247,43 @@ export AWS_DEFAULT_REGION=us-east-1
 
 # 4. Create the S3 bucket + DynamoDB table, deploy the 4 Lambdas, wire up API Gateway
 bash scripts/deploy_all.sh
+```
 
-
-LocalStack Community does not persist state, so re-run deploy_all.sh each time you restart LocalStack.
+LocalStack Community does not persist state, so re-run `deploy_all.sh` each time you restart LocalStack.
 
 ### Exercise the four endpoints
 
 The deployed Lambda functions are invoked directly below (LocalStack Community's API Gateway HTTP routing is unreliable, so direct invoke demonstrates each endpoint against the real S3 + DynamoDB):
 
-bash
+```bash
 # UPLOAD
-aws --endpoint-url=http://localhost:4566 lambda invoke --function-name images-upload --payload '{"body":"{"user_id":"demo","filename":"pixel.png","content_type":"image/png","image_base64":"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="}"}' /tmp/upload.json --cli-binary-format raw-in-base64-out >/dev/null ; cat /tmp/upload.json ; echo
+aws --endpoint-url=http://localhost:4566 lambda invoke --function-name images-upload \
+  --payload "{\"body\":\"{\\\"user_id\\\":\\\"demo\\\",\\\"filename\\\":\\\"pixel.png\\\",\\\"content_type\\\":\\\"image/png\\\",\\\"image_base64\\\":\\\"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=\\\"}\"}" \
+  /tmp/upload.json --cli-binary-format raw-in-base64-out ; cat /tmp/upload.json ; echo
 
 # LIST
-aws --endpoint-url=http://localhost:4566 lambda invoke --function-name images-list --payload '{}' /tmp/list.json --cli-binary-format raw-in-base64-out >/dev/null ; cat /tmp/list.json ; echo
+aws --endpoint-url=http://localhost:4566 lambda invoke --function-name images-list \
+  --payload '{}' /tmp/list.json --cli-binary-format raw-in-base64-out ; cat /tmp/list.json ; echo
 
 # GET (replace IMAGE_ID with the image_id returned by UPLOAD)
 IMAGE_ID=paste-image-id-here
-aws --endpoint-url=http://localhost:4566 lambda invoke --function-name images-get --payload "{"pathParameters":{"image_id":"$IMAGE_ID"}}" /tmp/get.json --cli-binary-format raw-in-base64-out >/dev/null ; cat /tmp/get.json ; echo
+aws --endpoint-url=http://localhost:4566 lambda invoke --function-name images-get \
+  --payload "{\"pathParameters\":{\"image_id\":\"$IMAGE_ID\"}}" \
+  /tmp/get.json --cli-binary-format raw-in-base64-out ; cat /tmp/get.json ; echo
 
 # DELETE
-aws --endpoint-url=http://localhost:4566 lambda invoke --function-name images-delete --payload "{"pathParameters":{"image_id":"$IMAGE_ID"}}" /tmp/delete.json --cli-binary-format raw-in-base64-out >/dev/null ; cat /tmp/delete.json ; echo
-
+aws --endpoint-url=http://localhost:4566 lambda invoke --function-name images-delete \
+  --payload "{\"pathParameters\":{\"image_id\":\"$IMAGE_ID\"}}" \
+  /tmp/delete.json --cli-binary-format raw-in-base64-out ; cat /tmp/delete.json ; echo
+```
 
 Tear everything down when finished:
 
-bash
+```bash
 bash scripts/teardown.sh
 docker compose down -v
+```
+
 
 
 ### LocalStack demo output
