@@ -278,6 +278,12 @@ Tear everything down:
 
 ---
 
+### LocalStack demo output
+
+The four endpoints invoked against the deployed LocalStack stack (real S3 + DynamoDB)
+
+![LocalStack demo](docs/localstack-demo.png)
+
 ## 9. Running the unit tests
 
 The tests use **moto** to mock S3 and DynamoDB in memory, so they run in
@@ -293,6 +299,8 @@ The suite covers, per endpoint: success paths, missing/invalid input,
 unsupported content type, oversized images, all search filters (individually
 and combined), pagination across pages, not-found (404), and the wrong-owner
 (403) case on delete.
+
+![pytest results](docs/test-results.png)
 
 ---
 
@@ -434,8 +442,4 @@ unfiltered browsing would add more GSIs.
 **UUID image IDs.** Chosen over sequential IDs so writes spread across
 DynamoDB partitions and never form a single-partition bottleneck.
 
-## Test results
 
-All 24 unit tests pass (run with pytest):
-
-![pytest results](docs/test-results.png)
